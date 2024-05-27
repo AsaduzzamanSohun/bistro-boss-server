@@ -260,16 +260,16 @@ async function run() {
             const menuItems = await menuCollection.estimatedDocumentCount();
             const orders = await paymentCollection.estimatedDocumentCount();
 
-            // This is not the best way
+            // this is not the best way
             // const payments = await paymentCollection.find().toArray();
-            // const revenue = payments.reduce((total, payment) => total + payment, 0);
+            // const revenue = payments.reduce((total, payment) => total + payment.price, 0);
 
             const result = await paymentCollection.aggregate([
                 {
                     $group: {
                         _id: null,
                         totalRevenue: {
-                            $sum: "$price"
+                            $sum: '$price'
                         }
                     }
                 }
@@ -283,7 +283,7 @@ async function run() {
                 orders,
                 revenue
             })
-        });
+        })
 
 
         // using aggregate pipeline
@@ -295,7 +295,7 @@ async function run() {
                 {
                     $lookup: {
                         from: 'menu',
-                        localField: 'menuItemsIds',
+                        localField: 'menuItemIds',
                         foreignField: '_id',
                         as: 'menuItems'
                     }
@@ -320,6 +320,8 @@ async function run() {
                 }
 
             ]).toArray();
+
+            res.send(result)
         })
 
 
